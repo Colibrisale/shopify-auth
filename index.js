@@ -1,8 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import authHandler from "./api/auth.js"; // Подключаем обработчик авторизации
-import googleAuthHandler from "./api/google-auth.js"; // Подключаем обработчик Google авторизации
+import authHandler from "./api/auth.js";
+import googleAuthHandler from "./api/google-auth.js"; // ← Убедись, что этот импорт есть
 
 dotenv.config();
 
@@ -15,7 +15,7 @@ app.use(cors({
     allowedHeaders: "Content-Type,Authorization"
 }));
 
-app.use(express.json()); // Поддержка JSON
+app.use(express.json());
 
 // Главная страница проверки сервера
 app.get("/", (req, res) => {
@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 app.post("/api/auth", authHandler);
 
 // Маршрут для Google авторизации
-app.post("/api/google-auth", googleAuthHandler);
+app.use("/api/google-auth", googleAuthHandler); // ← Вместо `app.post()`, нужно `app.use()`
 
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
