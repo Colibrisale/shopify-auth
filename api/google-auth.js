@@ -1,27 +1,31 @@
-import fetch from "node-fetch";  
+import express from "express";
+import fetch from "node-fetch";
 
-export default async function handler(req, res) {  
-    if (req.method !== "POST") {  
-        return res.status(405).json({ success: false, message: "Method not allowed" });  
-    }  
+const router = express.Router();
 
-    const { credential } = req.body;  
-    if (!credential) {  
-        return res.status(400).json({ success: false, message: "Missing Google credential" });  
-    }  
+router.post("/", async (req, res) => {
+    if (req.method !== "POST") {
+        return res.status(405).json({ success: false, message: "Method not allowed" });
+    }
 
-    try {  
-        const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);  
-        const userData = await response.json();  
+    const { credential } = req.body;
+    if (!credential) {
+        return res.status(400).json({ success: false, message: "Missing Google credential" });
+    }
 
-        if (userData.error) {  
-            return res.status(400).json({ success: false, message: "Invalid Google token", error: userData.error });  
-        }  
+    try {
+        const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+        const userData = await response.json();
 
-        return res.status(200).json({ success: true, user: userData });  
-    } catch (error) {  
-        return res.status(500).json({ success: false, message: "Internal server error", error: error.message });  
-    }  
-}
+        if (userData.error) {
+            return res.status(400).json({ success: false, message: "Invalid Google token", error: userData.error });
+        }
 
+        return res.status(200).json({ success: true, user: userData });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
+    }
+});
+
+export default router;
 
